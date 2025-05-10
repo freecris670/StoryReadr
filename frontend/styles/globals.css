@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Дополнительные базовые стили */
+.input {
+  @apply w-full p-2 border border-gray-300 rounded mt-2;
+}
+.btn {
+  @apply px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700;
+}
