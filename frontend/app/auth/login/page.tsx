@@ -1,3 +1,4 @@
+// frontend/app/auth/login/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -6,53 +7,42 @@ import { useAuthStore } from '@/store/authStore';
 
 export default function LoginPage() {
   const router = useRouter();
-  const setToken = useAuthStore((s) => s.setToken);
   const fetchProfile = useAuthStore((s) => s.fetchProfile);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const t = localStorage.getItem('token');
-    if (t) {
-      setToken(t);
-      router.replace('/dashboard');
+    // Если в localStorage уже есть refreshToken, пытаемся реавторизоваться
+    const rt = localStorage.getItem('refreshToken');
+    if (rt) {
+      fetchProfile()
+        .then(() => {
+          router.replace('/dashboard');
+        })
+        .catch(() => {
+          // если сессия просрочена или невалидна — остаёмся на логине
+          localStorage.removeItem('refreshToken');
+        });
     }
-  }, [setToken, router]);
+  }, [fetchProfile, router]);
 
   const handleLogin = async () => {
     setError(null);
     const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
-    if (err) {
-      setError(err.message);
-      return;
-    }
-    const session = data.session;
-    if (!session) {
-      setError('Не удалось получить сессию');
+
+    if (err || !data.session) {
+      setError(err?.message || 'Не удалось войти');
       return;
     }
 
-   // Устанавливаем сессию в клиент Supabase
-   const { error: setErr } = await supabase.auth.setSession({
-     access_token: session.access_token,
-     refresh_token: session.refresh_token
-   });
-   if (setErr) {
-     console.error('Ошибка setSession:', setErr);
-     setError('Не удалось установить сессию');
-     return;
-   }
-   
-    // Сохраняем токен в Zustand + localStorage
-    setToken(session.access_token);
-
+    // После успешного signInWithPassword supabase-js сам сохранит access+refresh в своём localStorage
+    // Теперь забираем сессию и profile с бекенда
     try {
-      await fetchProfile();        // теперь getUser() точно найдёт данные
+      await fetchProfile();
       router.push('/dashboard');
     } catch (e: any) {
-      console.error('fetchProfile error:', e);
-      setError('Не удалось получить профиль. Попробуйте позже.');
+      setError('Не удалось получить профиль: ' + e.message);
     }
   };
 
@@ -65,16 +55,18 @@ export default function LoginPage() {
         placeholder="Email"
         className="input"
         value={email}
-        onChange={e => setEmail(e.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
         placeholder="Пароль"
         className="input"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={handleLogin} className="btn mt-4">Войти</button>
+      <button onClick={handleLogin} className="btn mt-4">
+        Войти
+      </button>
     </div>
   );
 }

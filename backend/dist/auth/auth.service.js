@@ -16,12 +16,19 @@ let AuthService = class AuthService {
     constructor(supabaseService) {
         this.supabaseService = supabaseService;
     }
-    async validateToken(token) {
-        const { data, error } = await this.supabaseService.client.auth.getUser(token);
-        if (error || !data.user) {
-            throw new common_1.UnauthorizedException('Invalid token');
+    async validateToken(accessToken, refreshToken) {
+        const { data: sessionData, error: sessErr } = await this.supabaseService.client.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+        });
+        if (sessErr || !sessionData.session) {
+            throw new common_1.UnauthorizedException('Invalid auth session');
         }
-        return data.user;
+        const { data: userData, error: userErr } = await this.supabaseService.client.auth.getUser();
+        if (userErr || !userData.user) {
+            throw new common_1.UnauthorizedException('Cannot retrieve user');
+        }
+        return userData.user;
     }
 };
 exports.AuthService = AuthService;

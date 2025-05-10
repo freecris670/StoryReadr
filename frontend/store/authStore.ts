@@ -1,6 +1,7 @@
-// frontend/store/authStore.ts
 import { create } from 'zustand'
 import { supabase } from '@/lib/supabaseClient'
+import { fetchAuthProfile, AuthProfile } from '@/api/auth'
+import type { Session } from '@supabase/supabase-js'
 
 interface User {
   id: string
@@ -9,54 +10,53 @@ interface User {
 }
 
 interface AuthState {
-  token: string | null
+  accessToken: string | null
+  refreshToken: string | null
   user: User | null
-  setToken: (token: string) => void
-  setUser: (user: User) => void
+  setTokens: (access: string, refresh: string) => void
   logout: () => Promise<void>
   fetchProfile: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set, get) => {
-  // при инициализации читаем токен для бэкенда
-  const savedToken =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  const storedRefresh = typeof window !== 'undefined'
+    ? localStorage.getItem('refreshToken')
+    : null;
 
   return {
-    token: savedToken,
+    accessToken: null,
+    refreshToken: storedRefresh,
     user: null,
 
-    // сохраняем токен для запросов к бэкенду
-    setToken: (token) => {
-      set({ token })
-      localStorage.setItem('token', token)
-      // supabase-js автоматически сохраняет сессию при signInWithPassword
+    setTokens(access, refresh) {
+      set({ accessToken: access, refreshToken: refresh });
+      localStorage.setItem('refreshToken', refresh);
     },
 
-    setUser: (user) => {
-      set({ user })
-    },
-
-    // выходим и из supabase-клиента, и из нашего стора
     logout: async () => {
       await supabase.auth.signOut()
-      set({ token: null, user: null })
-      localStorage.removeItem('token')
+      set({ accessToken: null, refreshToken: null, user: null })
+      localStorage.removeItem('refreshToken')
     },
 
-    // получаем профиль из supabase-аутентификации
     fetchProfile: async () => {
-      const { data, error } = await supabase.auth.getUser()
-      if (error || !data.user) {
-        throw new Error(error?.message || 'Не удалось получить пользователя')
+      // 1) получаем сессию из supabase-js (access+refresh обновятся при необходимости)
+      const { data: { session }, error: sessErr } = await supabase.auth.getSession()
+      if (sessErr || !session) {
+        throw new Error(sessErr?.message || 'Нет сессии')
       }
-      const u = data.user
-      const profile: User = {
-        id: u.id,
-        email: u.email!,
-        user_metadata: u.user_metadata || {}
-      }
-      set({ user: profile })
+      // 2) сохраняем токены
+      get().setTokens(session.access_token, session.refresh_token)
+      // 3) зовём наш бэкенд
+      const profile: AuthProfile = await fetchAuthProfile(
+        session.access_token,
+        session.refresh_token
+      )
+      set({ user: {
+        id: profile.id,
+        email: profile.email,
+        user_metadata: profile.user_metadata || {}
+      }})
     }
   }
 })

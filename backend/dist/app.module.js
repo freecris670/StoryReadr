@@ -14,6 +14,7 @@ const auth_module_1 = require("./auth/auth.module");
 const books_module_1 = require("./books/books.module");
 const progress_module_1 = require("./progress/progress.module");
 const sessions_module_1 = require("./sessions/sessions.module");
+const users_module_1 = require("./users/users.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,6 +27,7 @@ exports.AppModule = AppModule = __decorate([
             books_module_1.BooksModule,
             progress_module_1.ProgressModule,
             sessions_module_1.SessionsModule,
+            users_module_1.UsersModule,
         ],
     })
 ], AppModule);

@@ -19,9 +19,13 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async profile(auth) {
-        const token = auth.replace('Bearer ', '');
-        const user = await this.authService.validateToken(token);
+    async profile(authHeader, refreshHeader) {
+        if (!authHeader || !refreshHeader) {
+            throw new common_1.UnauthorizedException('Missing authentication headers');
+        }
+        const accessToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+        const refreshToken = refreshHeader.replace(/^Bearer\s+/i, '').trim();
+        const user = await this.authService.validateToken(accessToken, refreshToken);
         return {
             id: user.id,
             email: user.email,
@@ -33,8 +37,9 @@ exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Get)('profile'),
     __param(0, (0, common_1.Headers)('authorization')),
+    __param(1, (0, common_1.Headers)('x-refresh-token')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "profile", null);
 exports.AuthController = AuthController = __decorate([

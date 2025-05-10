@@ -1,37 +1,48 @@
-const API = process.env.NEXT_PUBLIC_BACKEND_URL;
+// frontend/api/progress.ts
+const API = process.env.NEXT_PUBLIC_BACKEND_URL!
 
-export async function fetchProgress(token: string, bookId: string) {
+export interface ProgressData {
+  current_page: number
+  percent: number
+}
+
+export async function fetchProgress(
+  accessToken: string,
+  refreshToken: string,
+  bookId: string
+): Promise<ProgressData> {
   const res = await fetch(`${API}/progress/${bookId}`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'x-refresh-token': `Bearer ${refreshToken}`,
+    },
+  })
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || 'Ошибка загрузки прогресса');
+    const err = await res.json().catch(() => null)
+    throw new Error(err?.message || 'Ошибка загрузки прогресса')
   }
-  
-  return res.json();
+  return res.json()
 }
 
 export async function upsertProgress(
-  token: string,
+  accessToken: string,
+  refreshToken: string,
   bookId: string,
   currentPage: number,
   percent: number
-) {
+): Promise<ProgressData> {
   const res = await fetch(`${API}/progress`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${accessToken}`,
+      'x-refresh-token': `Bearer ${refreshToken}`,
     },
-    body: JSON.stringify({ bookId, currentPage, percent })
-  });
-  
+    body: JSON.stringify({ bookId, currentPage, percent }),
+  })
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || 'Ошибка обновления прогресса');
+    const err = await res.json().catch(() => null)
+    throw new Error(err?.message || 'Ошибка обновления прогресса')
   }
-  
-  return res.json();
+  return res.json()
 }
