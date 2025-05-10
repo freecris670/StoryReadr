@@ -7,7 +7,6 @@ export class AuthController {
 
   @Get('profile')
   async profile(@Headers('authorization') auth: string) {
-    if (!auth) throw new UnauthorizedException();
     const token = auth.replace('Bearer ', '');
     const user = await this.authService.validateToken(token);
     // Возвращаем профиль

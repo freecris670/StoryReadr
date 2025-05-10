@@ -20,8 +20,6 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     async profile(auth) {
-        if (!auth)
-            throw new common_1.UnauthorizedException();
         const token = auth.replace('Bearer ', '');
         const user = await this.authService.validateToken(token);
         return {

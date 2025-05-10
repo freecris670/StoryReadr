@@ -21,6 +21,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
@@ -35,9 +39,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "baseUrl": ".",
-  "paths": {
-    "@/*": ["*"]
-  },
+  ]
 }

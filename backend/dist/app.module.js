@@ -9,8 +9,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const auth_module_1 = require("./auth/auth.module");
 const supabase_module_1 = require("./supabase/supabase.module");
+const auth_module_1 = require("./auth/auth.module");
+const books_module_1 = require("./books/books.module");
+const progress_module_1 = require("./progress/progress.module");
+const sessions_module_1 = require("./sessions/sessions.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -20,6 +23,9 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             supabase_module_1.SupabaseModule,
             auth_module_1.AuthModule,
+            books_module_1.BooksModule,
+            progress_module_1.ProgressModule,
+            sessions_module_1.SessionsModule,
         ],
     })
 ], AppModule);

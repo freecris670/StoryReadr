@@ -1,4 +1,3 @@
-// Путь: frontend/app/auth/login/page.tsx
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -20,7 +19,7 @@ export default function LoginPage() {
       setToken(t);
       router.replace('/dashboard');
     }
-  }, []);
+  }, [setToken, router]); // Добавлены зависимости
 
   const handleLogin = async () => {
     setError(null);

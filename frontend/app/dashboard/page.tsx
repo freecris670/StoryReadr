@@ -24,7 +24,7 @@ export default function DashboardPage() {
       } catch (_) { }
       setLoading(false);
     })();
-  }, []);
+  }, [token, router, fetchProfile]);
 
   if (loading) {
     return <div className="p-6">Загрузка...</div>;
