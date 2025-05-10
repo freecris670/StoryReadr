@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import { ReactNode } from 'react';
 
 export const metadata = {
-  title: 'Gamify Reading',
+  title: 'StoryReadr',
   description: 'Геймификация чтения для людей с ADHD'
 };
 

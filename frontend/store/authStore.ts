@@ -15,45 +15,43 @@ interface AuthState {
   fetchProfile: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  token: null,
-  user: null,
+export const useAuthStore = create<AuthState>((set, get) => {
+  // Сразу читаем из localStorage
+  const savedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-  setToken: (token) => {
-    set({ token });
-    // Сохраним в localStorage, чтобы не терять между перезагрузками
-    localStorage.setItem('token', token);
-  },
+  return {
+    token: savedToken,
+    user: null,
 
-  setUser: (user) => {
-    set({ user });
-  },
+    setToken: (token) => {
+      set({ token });
+      localStorage.setItem('token', token);
+    },
 
-  logout: () => {
-    set({ token: null, user: null });
-    localStorage.removeItem('token');
-    // Прокиньте очистку сессии Supabase, если нужно:
-    // supabase.auth.signOut()
-  },
+    setUser: (user) => {
+      set({ user });
+    },
 
-  fetchProfile: async () => {
-    const token = get().token || localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      if (!res.ok) throw new Error('Не авторизован');
-      const data = await res.json();
-      get().setUser(data);
-    } catch (e) {
-      console.error('fetchProfile error:', e);
-      get().logout();
+    logout: () => {
+      set({ token: null, user: null });
+      localStorage.removeItem('token');
+    },
+
+    fetchProfile: async () => {
+      const token = get().token;
+      if (!token) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/profile`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error('Не авторизован');
+        const data: User = await res.json();
+        get().setUser(data);
+      } catch (e) {
+        console.error('fetchProfile error:', e);
+        get().logout();
+      }
     }
-  }
-}));
+  };
+});

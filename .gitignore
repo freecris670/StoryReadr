@@ -1,0 +1,12 @@
+# Игнорируем реальные ключи
+*.env
+frontend/.env*
+backend/.env*
+# Скрытые файлы окружения
+frontend/.env.local
+backend/.env.local
+
+# Артефакты сборки
+node_modules
+.next
+dist
