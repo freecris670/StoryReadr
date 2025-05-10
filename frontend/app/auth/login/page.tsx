@@ -12,14 +12,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Если уже в localStorage есть token — сразу на дашборд
   useEffect(() => {
     const t = localStorage.getItem('token');
     if (t) {
       setToken(t);
       router.replace('/dashboard');
     }
-  }, [setToken, router]); // Добавлены зависимости
+  }, [setToken, router]);
 
   const handleLogin = async () => {
     setError(null);
@@ -28,14 +27,33 @@ export default function LoginPage() {
       setError(err.message);
       return;
     }
-    const token = data.session?.access_token;
-    if (!token) {
-      setError('Не удалось получить токен');
+    const session = data.session;
+    if (!session) {
+      setError('Не удалось получить сессию');
       return;
     }
-    setToken(token);
-    await fetchProfile();
-    router.push('/dashboard');
+
+   // Устанавливаем сессию в клиент Supabase
+   const { error: setErr } = await supabase.auth.setSession({
+     access_token: session.access_token,
+     refresh_token: session.refresh_token
+   });
+   if (setErr) {
+     console.error('Ошибка setSession:', setErr);
+     setError('Не удалось установить сессию');
+     return;
+   }
+   
+    // Сохраняем токен в Zustand + localStorage
+    setToken(session.access_token);
+
+    try {
+      await fetchProfile();        // теперь getUser() точно найдёт данные
+      router.push('/dashboard');
+    } catch (e: any) {
+      console.error('fetchProfile error:', e);
+      setError('Не удалось получить профиль. Попробуйте позже.');
+    }
   };
 
   return (
