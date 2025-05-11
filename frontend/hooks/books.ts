@@ -1,9 +1,9 @@
-// frontend/hooks/books.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   fetchBooks,
   fetchBookById,
   uploadBook,
+  BookListItem,
   BookDetails
 } from '@/api/books'
 import { useAuthStore } from '@/store/authStore'
@@ -12,7 +12,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 export function useBooks() {
   const { accessToken, refreshToken } = useAuthStore()
-  return useQuery({
+  return useQuery<BookListItem[], Error>({
     queryKey: ['books'],
     queryFn: () => fetchBooks(accessToken!, refreshToken!),
     enabled: !!accessToken && !!refreshToken

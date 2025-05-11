@@ -1,5 +1,18 @@
 const API = process.env.NEXT_PUBLIC_BACKEND_URL!
 
+export interface BookListItem {
+  id: string
+  title: string
+  file_path: string
+  meta: any
+  created_at: string
+  progress: {
+    current_page: number
+    percent: number
+    updated_at: string | null
+  }
+}
+
 export interface BookDetails {
   id: string
   title: string
@@ -10,7 +23,7 @@ export interface BookDetails {
 export async function fetchBooks(
   accessToken: string,
   refreshToken: string
-) {
+): Promise<BookListItem[]> {
   const res = await fetch(`${API}/books`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

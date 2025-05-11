@@ -2,19 +2,48 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { SupabaseService } from '../supabase/supabase.service';
 import { v4 as uuid } from 'uuid';
 
+interface BookListItem {
+    id: string;
+    title: string;
+    file_path: string;
+    meta: any;
+    created_at: string;
+    progress: {
+      current_page: number;
+      percent: number;
+      updated_at: string | null;
+    }
+
+}
+
 @Injectable()
 export class BooksService {
   constructor(private supabase: SupabaseService) {}
 
-  async findAll(ownerId: string) {
+  async findAll(ownerId: string): Promise<BookListItem[]> {
     const { data, error } = await this.supabase.client
       .from('books')
-      .select('id, title, file_path, meta, created_at')
+      .select('id, title, file_path, meta, created_at, reading_progress ( current_page, percent, updated_at ) ')
       .eq('owner_id', ownerId);
-    if (error) throw new BadRequestException(error.message);
-    return data;
-  }
 
+    if (error) {
+      throw new BadRequestException(error.message);
+    }
+
+    // Сплющиваем вложенный массив reading_progress → объект progress
+    return (data as any[]).map(book => ({
+      id: book.id,
+      title: book.title,
+      file_path: book.file_path,
+      meta: book.meta,
+      created_at: book.created_at,
+      progress: book.reading_progress?.[0] ?? {
+        current_page: 0,
+        percent: 0,
+        updated_at: null
+      }
+    }));
+  }
   async findOne(ownerId: string, bookId: string) {
     const { data: book, error } = await this.supabase.client
       .from('books')

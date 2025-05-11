@@ -20,10 +20,11 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    "typeRoots": ["types", "node_modules/@types"],
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
     },
     "plugins": [
       {
@@ -32,6 +33,7 @@
     ]
   },
   "include": [
+    "types/**/*.d.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

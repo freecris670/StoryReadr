@@ -9,6 +9,7 @@ import { User } from '../auth/user.decorator';
 import type { User as SupabaseUser } from '@supabase/auth-js';
 import { UploadBookDto } from './dto/upload-book.dto';
 import type { Express } from 'express';
+import { BookListItemDto } from './dto/book-list-item.dto';
 
 @Controller('books')
 @UseGuards(AuthGuard)
@@ -16,9 +17,14 @@ export class BooksController {
   constructor(private books: BooksService) {}
 
   @Get()
-  async list(@User() user: SupabaseUser) {
-    return this.books.findAll(user.id);
+  async list(@User() user: SupabaseUser): Promise<BookListItemDto[]> {
+    try {
+      return await this.books.findAll(user.id);
+    } catch (e: any) {
+      throw new BadRequestException(e.message);
+    }
   }
+
 
   @Get(':id')
   async findOne(

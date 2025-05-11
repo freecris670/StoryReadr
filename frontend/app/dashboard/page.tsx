@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-
 import { useAuthStore } from '@/store/authStore'
 import { useBooks } from '@/hooks/books'
 import { useProgress } from '@/hooks/progress'
+
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -19,6 +19,7 @@ export default function DashboardPage() {
 
   // 1. Список книг
   const { data: books, isLoading: booksLoading, error: booksError } = useBooks()
+  const hasBooks = Array.isArray(books) && books.length > 0
   const currentBook = books?.[0]
 
   // 2. Прогресс по текущей книге
@@ -85,20 +86,27 @@ export default function DashboardPage() {
                 />
               </div>
               <p>{progress?.percent ?? 0}% завершено</p>
-              <button
-                onClick={() => router.push(`/reading/${currentBook.id}`)}
-                className="btn mt-2"
-              >
-                Начать сессию
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => router.push(`/reading/${currentBook.id}`)}
+                  className="btn"
+                >
+                Читать
+                </button>
+                <Link href="/my-books">
+                  <button className="btn bg-green-500 hover:bg-green-600">
+                    Мои книги
+                  </button>
+                </Link>
+              </div>
             </>
           ) : (
-            <p>
-              Книги не найдены.{' '}
-              <Link href="/onboarding/avatar" className="text-blue-600 underline">
-                Добавить книгу
-              </Link>
-            </p>
+            <button
+              onClick={() => router.push('/my-books')}
+              className="btn bg-blue-600 mt-2"
+            >
+              Мои книги
+            </button>
           )}
         </div>
 
