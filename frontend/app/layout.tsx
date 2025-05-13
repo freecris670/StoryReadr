@@ -11,14 +11,16 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru">
-      <body>
+    <html lang="ru" suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased">
         <ReactQueryProvider>
           <ThemeProvider>
-            <Header />
-            <main className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-              {children}
-            </main>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1 container mx-auto py-8">
+                {children}
+              </main>
+            </div>
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

@@ -3,33 +3,33 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev -p 3000",
+        "dev": "next dev -p 3000 -H 192.168.8.227",
         "build": "next build",
-        "start": "next start -p 3000"
+        "start": "next start -p 3000 -H 192.168.8.227"
     },
     "dependencies": {
         "@radix-ui/react-dialog": "^1.1.13",
         "@supabase/supabase-js": "^2.49.4",
         "@tanstack/react-query": "^5.75.7",
-        "autoprefixer": "^10.4.21",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "epubjs": "^0.3.93",
         "lucide-react": "^0.509.0",
         "next": "14",
-        "postcss": "^8.5.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "shadcn-ui": "^0.9.5",
         "tailwind-merge": "^3.2.0",
-        "tailwindcss": "^3.3.0",
-        "tailwindcss-animate": "^1.0.7",
         "zustand": "^5.0.4"
     },
     "devDependencies": {
         "@types/node": "^22.15.17",
         "@types/react": "^18.2.0",
         "@types/react-dom": "^18.2.0",
+        "autoprefixer": "^10.4.21",
+        "postcss": "^8.5.3",
+        "tailwindcss": "^3.3.0",
+        "tailwindcss-animate": "^1.0.7",
         "typescript": "^5.8.3"
     }
 }
