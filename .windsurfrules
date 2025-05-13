@@ -1,0 +1,96 @@
+# Local Windsurf Rules for Gamified Reading Service
+
+1. project_goal = "Создать веб-платформу для помощи людям с ADHD в регулярном чтении и завершении книг за счёт геймификации, визуальной вовлечённости и социальных механизмов"
+
+2. mvp_functional_blocks:
+   - reading_core:
+     • formats: ["ePub", "PDF", "Markdown"]
+     • session_timer_options: [5, 10, 15]  # минуты
+     • progress_bar: ["percent", "pages"]
+     • auto_save_position: true
+   - gamification_core:
+     • xp: true  # очки за страницы, главы, сессии без прерываний
+     • levels: true
+     • badges: ["first_50_pages", "3_days_in_a_row", "first_book", "..."]
+     • streaks: true
+     • pet_companion: true
+     • quests: ["read_10_pages_morning", "finish_chapter_by_friday", "..."]
+     • adventure_map: true
+     • social_groups: {min_size: 2, max_size: 5}
+     • leaderboard: ["xp", "books_completed"]
+     • ai_checkpoint_questions: true
+     • answer_quality_scoring: true
+   - additional_mechanics_priority:
+     1. audio_mode
+     2. chapter_summaries
+     3. push_email_reminders
+     4. external_book_integration: ["Gutenberg", "Google Books"]
+
+3. adhd_friendly_features:
+   - minimalist_ui: true
+   - pomodoro_reading_mode: true
+   - instant_progress_display: true
+   - micro_rewards: {pages: 5, reward: true}
+
+4. ui_ux_requirements:
+   - themes: ["light", "dark"]
+   - always_show_progress: true
+   - pet_in_corner: true
+   - achievements_section: true
+   - adventure_map_optional: true
+
+5. implementation_tasks:
+   - task1: "Интерфейс чтения с подсчётом XP и прогрессом"
+   - task2: "Геймификация: XP, уровни, бейджи, питомец"
+   - task3: "Групповые функции и челленджи"
+   - task4: "Визуальная «Карта приключений»"
+   - task5: "Стрики, таймеры, дружелюбные уведомления"
+   - task6: "Backend: аутентификация и хранение данных"
+   - task7: "Функция отцифровки книг и pdf файлов с помощью OpenAI API"
+
+6. user_flow:
+   - onboarding:
+     • choose_avatar_and_pet: true
+     • survey_read_time_min_per_day: [5, 10, 20]
+     • select_or_upload_book: true
+     • explain_features_screens: 4
+     • start_first_session: true
+   - auth_methods: ["email_password", "google_oauth"]
+   - dashboard:
+     • show: ["book_progress", "today_quest", "pet_status", "start_session_button", "streak", "level_xp_next_badge"]
+   - reading_mode:
+     • timer_options: [5, 10, 20]
+     • show_progress_bar: ["book", "chapter"]
+     • highlight_and_notes: true
+     • end_session_button: true
+     • award_xp_and_animation: true
+   - chapter_completion:
+     • award_badge: true
+     • popup_progress: true
+     • unlock_map_section: true
+     • share_prompt: true
+   - groups_challenges: true
+   - pet_companion_behavior: ["react_to_reading", "react_to_idle", "upgrade_with_xp"]
+   - profile_page:
+     • show: ["level", "total_xp", "books_completed", "badges_collection", "settings"]
+   - notifications:
+     • in_app: true
+     • email_push: true
+     • customizable_messages: true
+   - return_after_break:
+     • inactivity_days_threshold: 2
+     • gentle_return_scenario: true
+     • mini_task: "read_1_page"
+
+7. coding_guidelines:
+   - frontend_framework: "React (TypeScript)"
+   - backend_framework: "Node.js (Express) / Python (FastAPI)"
+   - database: "PostgreSQL"
+   - auth: ["JWT", "OAuth2"]
+   - state_management: "Redux / Zustand"
+   - styling: "Tailwind CSS"
+   - ai_services: ["OpenAI API"]  # для генерации вопросов и итогов
+   - testing: ["Jest", "Cypress"]
+   - ci_cd: "GitHub Actions"
+
+# Конец файла Local Windsurf Rules
